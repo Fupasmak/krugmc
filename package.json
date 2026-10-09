@@ -1,0 +1,37 @@
+{
+  "name": "krugmc",
+  "private": true,
+  "version": "1.0.0",
+  "description": "KRUG — сайт, Telegram-бот и Minecraft-плагин сервера krugmc.ru",
+  "workspaces": [
+    "web",
+    "TGBOT"
+  ],
+  "engines": {
+    "node": ">=22"
+  },
+  "scripts": {
+    "dev": "npm run dev --workspace=web",
+    "dev:bot": "npm run dev --workspace=TGBOT",
+    "build": "npm run build --workspace=web && npm run build --workspace=TGBOT",
+    "start": "npm run start --workspace=web",
+    "start:bot": "npm run start --workspace=TGBOT",
+    "db:generate": "npm run db:generate --workspace=web",
+    "db:migrate": "npm run db:migrate --workspace=web",
+    "db:deploy": "npm run db:deploy --workspace=web",
+    "db:seed": "npm run db:seed --workspace=web",
+    "db:studio": "npm run db:studio --workspace=web",
+    "lint": "npm run lint --workspace=web",
+    "typecheck": "npm run typecheck --workspace=web && npm run typecheck --workspace=TGBOT",
+    "check:dashes": "node scripts/check-dashes.mjs"
+  },
+  "allowScripts": {
+    "esbuild@0.28.2": true,
+    "prisma@6.19.3": true,
+    "sharp@0.33.5": true,
+    "sharp@0.35.4": true,
+    "unrs-resolver@1.12.2": true,
+    "@prisma/client@6.19.3": true,
+    "@prisma/engines@6.19.3": true
+  }
+}

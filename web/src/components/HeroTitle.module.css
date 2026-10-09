@@ -1,0 +1,62 @@
+/* Заголовок hero: текст проявляется по буквам, как набор в терминале.
+   Анимируется только opacity. */
+
+.title {
+  font-family: var(--font-pixel);
+  font-size: clamp(28px, 4.6vw, 56px);
+  line-height: 1.22;
+  letter-spacing: 0.01em;
+  margin: 0;
+  -webkit-font-smoothing: none;
+}
+
+.line {
+  display: block;
+}
+
+.word {
+  display: inline-block;
+  white-space: nowrap;
+}
+
+.char {
+  display: inline-block;
+  white-space: pre;
+  opacity: 0;
+  animation: reveal 1ms linear forwards;
+  animation-delay: var(--char-delay, 0ms);
+}
+
+/* Слово «квадрат» подсвечено фосфором и слегка мерцает один раз */
+.accentWord {
+  color: var(--phosphor);
+  text-shadow: 0 0 12px rgba(124, 255, 90, 0.35);
+}
+
+.caret {
+  display: inline-block;
+  width: 0.5em;
+  height: 0.86em;
+  margin-left: 0.14em;
+  background: var(--phosphor);
+  vertical-align: -0.04em;
+  opacity: 0;
+  animation:
+    reveal 1ms linear forwards,
+    caret-blink 1.06s steps(1, end) infinite;
+  animation-delay: var(--caret-delay, 0ms), var(--caret-delay, 0ms);
+}
+
+@keyframes reveal {
+  to {
+    opacity: 1;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .char,
+  .caret {
+    animation: none;
+    opacity: 1;
+  }
+}

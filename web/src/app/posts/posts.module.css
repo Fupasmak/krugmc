@@ -1,0 +1,174 @@
+.toolbar {
+  display: flex;
+  align-items: center;
+  gap: var(--gap-sm);
+  flex-wrap: wrap;
+  margin-bottom: var(--gap-lg);
+}
+
+.filters {
+  display: flex;
+  gap: 6px;
+}
+
+.filter {
+  padding: 8px 14px;
+  background: var(--surface);
+  border: 1px solid var(--line);
+  border-radius: 0;
+  color: var(--text-dim);
+  font-family: var(--font-pixel);
+  font-size: var(--text-xs);
+  text-transform: uppercase;
+}
+
+.filterActive {
+  color: var(--acid);
+  border-color: var(--acid-dim);
+  background: var(--surface-3);
+}
+
+.count {
+  margin-left: auto;
+  color: var(--text-faint);
+  font-size: var(--text-sm);
+}
+
+.feed {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: var(--gap);
+  align-items: start;
+}
+
+/* От планшета лента идёт в две колонки, порядок чтения слева направо */
+@media (min-width: 768px) {
+  .feed {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+
+.pager {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: var(--gap-sm);
+  margin-top: var(--gap-lg);
+}
+
+.pagerInfo {
+  font-family: var(--font-pixel);
+  font-size: var(--text-xs);
+  color: var(--text-dim);
+}
+
+.empty {
+  padding: var(--gap-xl);
+  text-align: center;
+  color: var(--text-faint);
+  background: var(--surface);
+  border: 1px solid var(--line);
+  border-radius: var(--radius-card);
+}
+
+.formGrid {
+  display: grid;
+  gap: var(--gap);
+  max-width: 760px;
+}
+
+.row {
+  display: flex;
+  gap: var(--gap-sm);
+  flex-wrap: wrap;
+  align-items: center;
+}
+
+.tagPick {
+  display: flex;
+  gap: 6px;
+}
+
+.files {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(140px, 1fr));
+  gap: var(--gap-sm);
+}
+
+.file {
+  position: relative;
+  border: 1px solid var(--line);
+  background: var(--surface-sunken);
+  padding: 6px;
+  font-size: 11px;
+  color: var(--text-dim);
+  word-break: break-all;
+}
+
+.filePreview {
+  width: 100%;
+  aspect-ratio: 16 / 10;
+  object-fit: cover;
+  margin-bottom: 4px;
+  border: 1px solid var(--line);
+}
+
+.progress {
+  height: 14px;
+  background: var(--surface-sunken);
+  border: 1px solid var(--line);
+  border-radius: var(--radius-card);
+  overflow: hidden;
+}
+
+.progressBar {
+  height: 100%;
+  background-image: url('/blocks/emerald.png');
+  background-size: 16px 16px;
+  image-rendering: pixelated;
+  /* ширина меняется шагами по мере отправки: анимации нет намеренно,
+     иначе пиксельная текстура «плывёт» */
+}
+
+/* Переключатель метки: видно, что выбрано */
+.tagOption {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 9px 14px;
+  background: transparent;
+  border: 1px solid var(--line);
+  border-radius: var(--radius-btn);
+  color: var(--text-faint);
+  font-family: var(--font-pixel);
+  font-size: var(--text-sm);
+  cursor: pointer;
+  transition:
+    color 120ms ease,
+    border-color 120ms ease,
+    background-color 120ms ease;
+}
+
+.tagOption:hover {
+  color: var(--text);
+  border-color: var(--line-strong);
+}
+
+.tagOptionActive {
+  color: var(--phosphor);
+  border-color: var(--line-accent);
+  background: rgba(124, 255, 90, 0.1);
+}
+
+.tagMark {
+  display: grid;
+  place-items: center;
+  width: 16px;
+  height: 16px;
+  border: 1px solid var(--line-strong);
+  color: var(--phosphor);
+}
+
+.tagOptionActive .tagMark {
+  border-color: var(--line-accent);
+}

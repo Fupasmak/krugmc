@@ -1,0 +1,119 @@
+.grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+  gap: var(--gap-lg);
+  align-items: start;
+}
+
+.card {
+  display: flex;
+  flex-direction: column;
+  gap: var(--gap);
+  padding: var(--gap-lg);
+  background: var(--surface);
+  border: 1px solid var(--line);
+  border-radius: var(--radius-panel);
+}
+
+.kicker {
+  font-family: var(--font-pixel);
+  font-size: var(--text-xs);
+  text-transform: uppercase;
+  color: var(--text-faint);
+  letter-spacing: 0.06em;
+}
+
+.title {
+  font-size: var(--text-lg);
+}
+
+.lead {
+  color: var(--text-dim);
+  font-size: var(--text-sm);
+  margin: 0;
+}
+
+.steps {
+  margin: 0;
+  padding-left: 1.2em;
+  color: var(--text-dim);
+  font-size: var(--text-sm);
+}
+
+.steps li {
+  margin-bottom: 4px;
+}
+
+/* большой код входа */
+.code {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  padding: var(--gap) var(--gap-sm);
+  background: var(--surface-sunken);
+  border: 1px solid var(--line);
+  border-radius: var(--radius-card);
+  box-shadow: inset 1px 1px 0 0 var(--line);
+  font-family: var(--font-pixel);
+  font-size: var(--text-2xl);
+  letter-spacing: 0.22em;
+  color: var(--acid);
+  text-align: center;
+}
+
+.command {
+  display: flex;
+  align-items: center;
+  gap: var(--gap-sm);
+  padding: 8px 10px;
+  background: var(--surface-sunken);
+  border: 1px solid var(--line-strong);
+  border-radius: var(--radius-sm);
+  font-family: var(--font-pixel);
+  font-size: var(--text-sm);
+  color: var(--text);
+  overflow-x: auto;
+}
+
+.timer {
+  font-size: var(--text-xs);
+  color: var(--text-faint);
+}
+
+.status {
+  display: flex;
+  align-items: center;
+  gap: var(--gap-sm);
+  font-size: var(--text-sm);
+  color: var(--text-dim);
+}
+
+.statusDot {
+  width: 8px;
+  height: 8px;
+  background: var(--acid);
+  animation: blink 1s steps(2, end) infinite;
+}
+
+@keyframes blink {
+  50% {
+    opacity: 0.2;
+  }
+}
+
+.error {
+  color: var(--danger);
+  font-size: var(--text-sm);
+}
+
+.ok {
+  color: var(--acid);
+  font-size: var(--text-sm);
+}
+
+.note {
+  font-size: var(--text-xs);
+  color: var(--text-faint);
+}
+

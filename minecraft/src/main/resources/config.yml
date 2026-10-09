@@ -1,0 +1,35 @@
+# Настройки плагина KRUG.
+# После правки: /krug reload (право krug.admin)
+
+# Как подключаться к серверу: айпи или домен с портом.
+# Показывается только в игре по команде /krug ip, на сайт не уходит.
+server:
+  address: ""
+
+api:
+  # Адрес сайта без слэша на конце
+  url: "https://krugmc.ru"
+  # Общий секрет HMAC. Должен совпадать с MC_HMAC_SECRET в .env сайта.
+  # Сгенерировать: openssl rand -hex 32
+  secret: "CHANGE_ME"
+  # Таймаут запроса к сайту, секунды
+  timeout-seconds: 10
+
+# Тексты. Поддерживается MiniMessage: <green>, <bold>, <click:open_url:'...'>
+messages:
+  prefix: "<dark_green>[<green>KRUG</green>]</dark_green> "
+  usage: "<gray>Пиши так: <white>/krug login <код с сайта></white>, ещё есть <white>/krug site</white> и <white>/krug ip"
+  site: "<gray>Сайт: <green><click:open_url:'%url%'>%url%</click>"
+  address: "<gray>Адрес сервера: <green>%address%"
+  address-unset: "<gray>Адрес сервера в конфиге плагина не заполнен."
+  wait: "<gray>Проверяю код, секунду."
+  success: "<green>Вход подтверждён. Возвращайся на сайт, ты в круге."
+  code-format: "<red>Код из шести букв и цифр. Посмотри его на сайте и набери целиком."
+  code-not-found: "<red>Такого кода нет или его уже использовали. Возьми новый на сайте."
+  code-expired: "<red>Код протух. Обнови страницу входа и возьми свежий."
+  too-many: "<red>Слишком много попыток подряд. Выдохни и попробуй через минуту."
+  site-unavailable: "<red>Сайт прилёг отдохнуть. Попробуй через минуту."
+  bad-config: "<red>Плагин не настроен: админ, проверь api.secret в config.yml."
+  no-permission: "<red>Прав не хватает."
+  players-only: "<red>Команда работает только в игре."
+  reloaded: "<green>Конфиг перечитан."

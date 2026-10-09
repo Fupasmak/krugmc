@@ -1,0 +1,28 @@
+.root {
+  display: inline-flex;
+  align-items: center;
+  gap: 9px;
+  line-height: 1;
+}
+
+.mark {
+  display: block;
+  flex: none;
+  image-rendering: pixelated;
+}
+
+.word {
+  font-family: var(--font-pixel);
+  font-size: 19px;
+  letter-spacing: 0.16em;
+  color: var(--text);
+  /* оптическая компенсация: у пиксельного шрифта нижний свес */
+  transform: translateY(1px);
+}
+
+/* В шапке узкого экрана остаётся один символ */
+@media (max-width: 460px) {
+  .hideWordOnPhone .word {
+    display: none;
+  }
+}

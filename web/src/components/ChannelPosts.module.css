@@ -1,0 +1,172 @@
+/* Посты канала игрока, оформленные карточками сайта, а не виджетом Telegram */
+
+.list {
+  display: grid;
+  gap: var(--gap);
+}
+
+.card {
+  display: flex;
+  flex-direction: column;
+  gap: var(--gap-sm);
+  padding: var(--gap);
+  background: var(--surface);
+  border: 1px solid var(--line);
+  border-radius: var(--radius-card);
+}
+
+.card:hover {
+  border-color: var(--line-accent);
+}
+
+.head {
+  display: flex;
+  align-items: center;
+  gap: var(--gap-sm);
+  font-family: var(--font-pixel);
+  font-size: var(--text-xs);
+  color: var(--text-faint);
+}
+
+.channel {
+  color: var(--text-dim);
+}
+
+.text {
+  color: var(--text);
+  font-size: var(--text-sm);
+  line-height: 1.6;
+  overflow: hidden;
+  display: -webkit-box;
+  -webkit-line-clamp: 8;
+  line-clamp: 8;
+  -webkit-box-orient: vertical;
+  overflow-wrap: anywhere;
+}
+
+.text a {
+  color: var(--phosphor);
+}
+
+/* Медиа поста: пропорции сохраняем, место резервируем заранее */
+.media {
+  display: grid;
+  gap: 4px;
+}
+
+.mediaSingle {
+  grid-template-columns: 1fr;
+}
+
+.mediaGrid {
+  grid-template-columns: 1fr 1fr;
+}
+
+.mediaCell {
+  position: relative;
+  display: block;
+  width: 100%;
+  padding: 0;
+  border: 1px solid var(--line);
+  background: var(--surface-sunken);
+  overflow: hidden;
+  cursor: zoom-in;
+}
+
+.mediaGrid .mediaCell {
+  aspect-ratio: 1;
+}
+
+.mediaSingle .mediaCell {
+  aspect-ratio: 4 / 3;
+  max-height: 340px;
+}
+
+.mediaCell img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  opacity: 0.88;
+  transition: opacity 140ms ease;
+}
+
+.mediaCell:hover img {
+  opacity: 1;
+}
+
+.playMark {
+  position: absolute;
+  inset: 0;
+  display: grid;
+  place-items: center;
+  color: var(--phosphor);
+  pointer-events: none;
+}
+
+.playMark::before {
+  content: '';
+  position: absolute;
+  width: 42px;
+  height: 42px;
+  background: rgba(6, 10, 7, 0.68);
+  border: 1px solid var(--line-accent);
+}
+
+.playMark > * {
+  position: relative;
+}
+
+.duration {
+  position: absolute;
+  right: 6px;
+  bottom: 6px;
+  padding: 1px 6px;
+  background: rgba(5, 8, 5, 0.85);
+  font-family: var(--font-pixel);
+  font-size: 10px;
+  color: var(--text-dim);
+  pointer-events: none;
+}
+
+.watch {
+  position: absolute;
+  left: 6px;
+  bottom: 6px;
+  padding: 2px 7px;
+  background: rgba(5, 8, 5, 0.85);
+  border: 1px solid var(--line-strong);
+  font-family: var(--font-pixel);
+  font-size: 10px;
+  color: var(--text);
+}
+
+.watch:hover {
+  color: var(--phosphor);
+  border-color: var(--line-accent);
+}
+
+.foot {
+  display: flex;
+  align-items: center;
+  gap: var(--gap-sm);
+  margin-top: auto;
+}
+
+.empty {
+  padding: var(--gap-lg);
+  background: var(--surface);
+  border: 1px solid var(--line);
+  border-radius: var(--radius-card);
+  color: var(--text-dim);
+  font-size: var(--text-sm);
+  display: flex;
+  flex-direction: column;
+  gap: var(--gap-sm);
+  align-items: flex-start;
+}
+
+@media (min-width: 900px) {
+  .list {
+    grid-template-columns: repeat(3, 1fr);
+  }
+}

@@ -1,0 +1,96 @@
+/*
+ * Палитра, шрифты и размеры KRUG.
+ * Атмосфера: тёмный терминал, фосфорный зелёный, пиксельные детали.
+ * Тема одна, тёмная.
+ */
+
+:root {
+  /* фон и поверхности */
+  --bg: #060a07;
+  --bg-deep: #030604;
+  --surface: rgba(124, 255, 90, 0.035);
+  --surface-2: rgba(124, 255, 90, 0.06);
+  --surface-3: rgba(124, 255, 90, 0.1);
+  --surface-solid: #0b120c;
+  --surface-sunken: #050805;
+
+  /* рамки: зелёные, приглушённые */
+  --line: rgba(124, 255, 90, 0.16);
+  --line-strong: rgba(124, 255, 90, 0.28);
+  --line-accent: rgba(124, 255, 90, 0.6);
+
+  /* пиксельные грани GUI: свет сверху-слева, тень снизу-справа */
+  --edge-light: rgba(124, 255, 90, 0.22);
+  --edge-dark: rgba(0, 0, 0, 0.7);
+
+  /* текст */
+  --text: #d8ecd0;
+  --text-dim: #93ab8a;
+  --text-faint: #5f7758;
+  --text-inverse: #04120a;
+
+  /* зелёные */
+  --phosphor: #7cff5a;
+  --phosphor-dim: #58c93d;
+  --green: #2f6b28;
+  --green-deep: #14300f;
+  --acid: #8dff6a;
+  --acid-dim: #6fd94f;
+
+  /* состояния */
+  --danger: #ff6b6b;
+  --warning: #ffcc4d;
+
+  /* шрифты:
+     pixel  - фирменный Minecraft RUS: логотип, заголовки, кнопки, меню;
+     accent - Science Gothic: заглушки, статусы, экраны ошибок;
+     body   - Onest: абзацы и описания. */
+  --font-pixel: var(--font-krug-pixel), 'Courier New', monospace;
+  --font-accent: 'Science Gothic', var(--font-krug-body), sans-serif;
+  --font-body: var(--font-krug-body), sans-serif;
+  --font-arcade: var(--font-krug-arcade), var(--font-krug-pixel), monospace;
+
+  /* скругления: почти нет, терминал квадратный */
+  --radius-card: 4px;
+  --radius-panel: 4px;
+  --radius-btn: 3px;
+  --radius-sm: 3px;
+
+  /* отступы */
+  --gap-xs: 4px;
+  --gap-sm: 8px;
+  --gap: 16px;
+  --gap-lg: 24px;
+  --gap-xl: 40px;
+  --gap-2xl: 72px;
+
+  --container: 1200px;
+  --header-height: 68px;
+
+  /* типографика: размеры кратны восьми, чтобы пиксели были ровными */
+  --text-xs: 12px;
+  --text-sm: 14px;
+  --text-md: 16px;
+  --text-lg: 20px;
+  --text-xl: 24px;
+  --text-2xl: 32px;
+  --text-3xl: 48px;
+
+  --shadow-btn: 0 2px 0 rgba(0, 0, 0, 0.55);
+
+  --z-header: 40;
+  --z-menu: 60;
+  --z-modal: 80;
+  --z-tooltip: 90;
+}
+
+@media (max-width: 720px) {
+  :root {
+    --gap-xl: 28px;
+    --gap-2xl: 48px;
+    --text-3xl: 32px;
+    --text-2xl: 24px;
+    --text-xl: 20px;
+    --header-height: 60px;
+  }
+}

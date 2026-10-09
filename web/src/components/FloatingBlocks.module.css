@@ -1,0 +1,53 @@
+/* Левитирующие блоки: изометрические кубы из трёх граней.
+   Чисто декоративные, кликам не мешают, при prefers-reduced-motion стоят. */
+
+.layer {
+  position: absolute;
+  inset: 0;
+  overflow: hidden;
+  pointer-events: none;
+  z-index: 0;
+}
+
+.block {
+  position: absolute;
+  transform-style: preserve-3d;
+  animation: bob 9s ease-in-out infinite;
+  will-change: transform;
+}
+
+.cube {
+  position: relative;
+  transform: rotateX(-24deg) rotateY(-38deg);
+  transform-style: preserve-3d;
+}
+
+.face {
+  position: absolute;
+  inset: 0;
+  background-size: cover;
+  image-rendering: pixelated;
+  backface-visibility: hidden;
+}
+
+.top {
+  filter: brightness(1.2);
+}
+
+.left {
+  filter: brightness(0.75);
+}
+
+.right {
+  filter: brightness(0.5);
+}
+
+@keyframes bob {
+  0%,
+  100% {
+    transform: translateY(0) rotate(0deg);
+  }
+  50% {
+    transform: translateY(-14px) rotate(2deg);
+  }
+}

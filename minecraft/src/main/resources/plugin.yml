@@ -1,0 +1,16 @@
+name: KRUG
+version: '${version}'
+main: ru.krugmc.plugin.KrugPlugin
+api-version: '26.2'
+description: Вход на сайт krugmc.ru прямо из игры
+author: KRUG
+website: https://krugmc.ru
+commands:
+  krug:
+    description: Команды сайта KRUG
+    usage: /krug login <код> | /krug site | /krug ip | /krug reload
+    aliases: [круг]
+permissions:
+  krug.admin:
+    description: Перезагружать конфиг плагина
+    default: op

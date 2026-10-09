@@ -1,0 +1,337 @@
+/* Круг из 3D-блоков: квадраты, выстроенные в круг.
+   Анимируются только transform, opacity и filter, чтобы телефоны тянули. */
+
+.stage {
+  position: relative;
+  width: 100%;
+  max-width: 460px;
+  aspect-ratio: 1;
+  margin: 0 auto;
+  --block-size: 84px;
+  /* отступ концов луча от краёв сцены: задаёт радиус орбиты */
+  --rim: 12%;
+  /* амплитуда дрейфа: не больше 8% радиуса орбиты */
+  --drift-base: 13px;
+}
+
+/* Зелёное свечение за композицией */
+.glow {
+  position: absolute;
+  inset: 4%;
+  border-radius: 50%;
+  background: radial-gradient(
+    circle at 50% 50%,
+    rgba(124, 255, 90, 0.26),
+    rgba(47, 107, 40, 0.14) 46%,
+    transparent 72%
+  );
+  pointer-events: none;
+}
+
+/* Внутренний след круга: точки живут внутри кольца, шире сцены не уходят */
+.ring {
+  position: absolute;
+  inset: 26%;
+  pointer-events: none;
+  z-index: 0;
+  animation: spin calc(var(--orbit-duration, 48s) * 2.4) linear infinite reverse;
+}
+
+/* Луч нулевой высоты: точка сидит на его конце, поворот не раздвигает кольцо */
+.dot {
+  position: absolute;
+  top: 50%;
+  left: 0;
+  width: 100%;
+  height: 0;
+  transform: rotate(var(--angle));
+}
+
+.dot::before {
+  content: '';
+  position: absolute;
+  left: 0;
+  top: -1.5px;
+  width: 3px;
+  height: 3px;
+  background: var(--phosphor);
+  opacity: 0.32;
+  animation: flicker 3.2s steps(2, end) infinite;
+  animation-delay: var(--dot-delay, 0s);
+}
+
+.orbit {
+  position: absolute;
+  inset: 0;
+  z-index: 1;
+  animation: spin var(--orbit-duration, 48s) linear infinite;
+}
+
+/* Слот это луч нулевой высоты от центра сцены: поворот такого луча
+   не раздвигает страницу, а блок садится на его конец. */
+.slot {
+  position: absolute;
+  top: 50%;
+  left: var(--rim);
+  right: var(--rim);
+  height: 0;
+  transform: rotate(var(--angle));
+}
+
+/* Компенсация поворотов: блок едет по кругу, но стоит ровно */
+.counter {
+  position: absolute;
+  right: 0;
+  top: 0;
+  width: var(--block-size, 84px);
+  height: var(--block-size, 84px);
+  margin: calc(var(--block-size, 84px) / -2) calc(var(--block-size, 84px) / -2) 0 0;
+  animation: spin var(--orbit-duration, 48s) linear infinite reverse;
+}
+
+/* Разворот луча: блок смотрит прямо, а не вдоль радиуса */
+.level {
+  width: 100%;
+  height: 100%;
+  transform: rotate(calc(var(--angle) * -1));
+}
+
+/* Дрейф вокруг своей точки на орбите: у каждого блока своя фаза */
+.drift {
+  width: 100%;
+  height: 100%;
+  animation: drift var(--drift-duration, 6s) ease-in-out infinite;
+  animation-delay: var(--drift-delay, 0s);
+}
+
+.appear {
+  width: 100%;
+  height: 100%;
+  animation: pop 520ms cubic-bezier(0.22, 1.25, 0.4, 1) backwards;
+  animation-delay: var(--pop-delay, 0s);
+}
+
+.press {
+  width: 100%;
+  height: 100%;
+}
+
+.jumping {
+  animation: jump 620ms ease-out;
+}
+
+.hit {
+  position: relative;
+  display: block;
+  width: 100%;
+  height: 100%;
+  border: 0;
+  padding: 0;
+  background: transparent;
+  transition: transform 160ms ease;
+}
+
+.hit:hover {
+  transform: scale(1.12);
+}
+
+.clickable {
+  cursor: pointer;
+}
+
+.block {
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+  image-rendering: pixelated;
+  /* мягкое свечение цветом самого блока */
+  filter: drop-shadow(0 8px 12px rgba(0, 0, 0, 0.45))
+    drop-shadow(0 0 10px var(--block-glow, rgba(124, 255, 90, 0.35)));
+  animation: breathe var(--glow-duration, 9s) ease-in-out infinite;
+  animation-delay: var(--glow-delay, 0s);
+}
+
+/* Облачко над бедроком */
+.bubble {
+  position: absolute;
+  left: 50%;
+  bottom: calc(100% + 14px);
+  transform: translateX(-50%);
+  z-index: 2;
+  padding: 7px 11px;
+  white-space: nowrap;
+  background: var(--surface-solid);
+  border: 1px solid var(--edge-dark);
+  box-shadow:
+    inset 2px 2px 0 0 var(--edge-light),
+    inset -2px -2px 0 0 var(--edge-dark);
+  font-family: var(--font-pixel);
+  font-size: var(--text-sm);
+  color: var(--phosphor);
+  animation: bubble-in 220ms ease-out;
+}
+
+/* Хвостик к блоку */
+.bubble::after {
+  content: '';
+  position: absolute;
+  top: 100%;
+  left: 50%;
+  width: 8px;
+  height: 8px;
+  margin-left: -4px;
+  background: var(--surface-solid);
+  border-right: 1px solid var(--edge-dark);
+  border-bottom: 1px solid var(--edge-dark);
+}
+
+/* Логотип в центре круга */
+.center {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: 34%;
+  transform: translate(-50%, -50%);
+  display: grid;
+  place-items: center;
+  gap: 6px;
+  text-align: center;
+}
+
+.centerLogo {
+  flex-direction: column;
+  gap: 8px;
+  filter: drop-shadow(0 0 18px rgba(124, 255, 90, 0.35));
+}
+
+@keyframes spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+@keyframes drift {
+  0%,
+  100% {
+    transform: translate3d(0, 0, 0);
+  }
+  25% {
+    transform: translate3d(
+      calc(var(--drift-base) * var(--drift-x, 0.8)),
+      calc(var(--drift-base) * var(--drift-y, 0.6) * -0.7),
+      0
+    );
+  }
+  50% {
+    transform: translate3d(
+      calc(var(--drift-base) * var(--drift-x, 0.8) * 0.2),
+      calc(var(--drift-base) * var(--drift-y, 0.6)),
+      0
+    );
+  }
+  75% {
+    transform: translate3d(
+      calc(var(--drift-base) * var(--drift-x, 0.8) * -1),
+      calc(var(--drift-base) * var(--drift-y, 0.6) * -0.3),
+      0
+    );
+  }
+}
+
+@keyframes breathe {
+  0%,
+  100% {
+    filter: drop-shadow(0 8px 12px rgba(0, 0, 0, 0.45))
+      drop-shadow(0 0 8px var(--block-glow, rgba(124, 255, 90, 0.3)));
+  }
+  50% {
+    filter: drop-shadow(0 8px 12px rgba(0, 0, 0, 0.45))
+      drop-shadow(0 0 16px var(--block-glow, rgba(124, 255, 90, 0.45)));
+  }
+}
+
+@keyframes pop {
+  from {
+    opacity: 0;
+    transform: scale(0.4);
+  }
+  70% {
+    opacity: 1;
+    transform: scale(1.08);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+
+@keyframes jump {
+  0% {
+    transform: translateY(0);
+  }
+  35% {
+    transform: translateY(-12px);
+  }
+  60% {
+    transform: translateY(0);
+  }
+  78% {
+    transform: translateY(-4px);
+  }
+  100% {
+    transform: translateY(0);
+  }
+}
+
+@keyframes bubble-in {
+  from {
+    opacity: 0;
+    transform: translate(-50%, 6px);
+  }
+  to {
+    opacity: 1;
+    transform: translate(-50%, 0);
+  }
+}
+
+@keyframes flicker {
+  0%,
+  70% {
+    opacity: 0.2;
+  }
+  71%,
+  100% {
+    opacity: 0.55;
+  }
+}
+
+@media (max-width: 900px) {
+  .stage {
+    max-width: 320px;
+    --block-size: 62px;
+    --rim: 13%;
+    --drift-base: 9px;
+  }
+}
+
+@media (max-width: 420px) {
+  .stage {
+    max-width: 270px;
+    --block-size: 54px;
+    --drift-base: 7px;
+  }
+}
+
+/* При выключенном движении блоки просто стоят */
+@media (prefers-reduced-motion: reduce) {
+  .orbit,
+  .ring,
+  .counter,
+  .level,
+  .drift,
+  .appear,
+  .press,
+  .block {
+    animation: none;
+  }
+}

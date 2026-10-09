@@ -1,0 +1,161 @@
+/* Голосование: пиксельные стрелки без текстур блоков.
+   Это намеренное исключение из правила про кнопки-блоки. */
+
+.wrap {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 2px;
+  width: 100%;
+}
+
+.button {
+  display: grid;
+  place-items: center;
+  width: 34px;
+  height: 30px;
+  padding: 0;
+  background: transparent;
+  border: 1px solid transparent;
+  border-radius: var(--radius-btn);
+  cursor: pointer;
+  transition:
+    color 120ms ease,
+    background-color 120ms ease,
+    border-color 120ms ease;
+}
+
+/* В покое стрелки бледные, чтобы не спорили с текстом завоза */
+.up {
+  color: rgba(124, 255, 90, 0.42);
+}
+
+.down {
+  color: rgba(255, 107, 107, 0.38);
+}
+
+.button:hover:not(:disabled) {
+  background: rgba(124, 255, 90, 0.07);
+}
+
+.up:hover:not(:disabled) {
+  color: rgba(124, 255, 90, 0.75);
+}
+
+.down:hover:not(:disabled) {
+  color: rgba(255, 107, 107, 0.75);
+  background: rgba(255, 107, 107, 0.07);
+}
+
+.button:disabled {
+  cursor: default;
+}
+
+/* Отданный голос горит ярко, второй вариант гаснет */
+.chosen.up {
+  color: var(--text-inverse);
+  background: var(--phosphor);
+  border-color: var(--phosphor);
+}
+
+.chosen.down {
+  color: #1a0707;
+  background: var(--danger);
+  border-color: var(--danger);
+}
+
+.button:disabled:not(.chosen) {
+  opacity: 0.35;
+}
+
+/* Короткий прыжок стрелки в момент голоса */
+.jump {
+  animation: jump 260ms ease-out;
+}
+
+.down.jump {
+  animation-name: jump-down;
+}
+
+.score {
+  font-family: var(--font-pixel);
+  font-size: var(--text-sm);
+  color: var(--text-faint);
+  line-height: 1;
+  padding: 3px 0;
+  cursor: default;
+}
+
+.scorePositive {
+  color: var(--phosphor);
+}
+
+.scoreNegative {
+  color: var(--danger);
+}
+
+/* Разбивка «+5 / -2» появляется при наведении на число */
+.breakdown {
+  position: absolute;
+  left: 50%;
+  transform: translateX(-50%);
+  top: -28px;
+  z-index: var(--z-tooltip);
+  padding: 3px 8px;
+  background: var(--surface-solid);
+  border: 1px solid var(--line-strong);
+  font-family: var(--font-pixel);
+  font-size: 11px;
+  color: var(--text);
+  white-space: nowrap;
+  pointer-events: none;
+}
+
+/* Всплывающее объяснение, почему кнопки не нажимаются */
+.note {
+  position: fixed;
+  left: 50%;
+  bottom: 24px;
+  transform: translateX(-50%);
+  z-index: var(--z-tooltip);
+  max-width: min(520px, calc(100vw - 32px));
+  padding: var(--gap) var(--gap-lg);
+  background: #0a0612;
+  border: 1px solid #3b2f63;
+  color: var(--text);
+  font-size: var(--text-sm);
+  display: flex;
+  flex-direction: column;
+  gap: var(--gap-sm);
+}
+
+.noteRow {
+  display: flex;
+  gap: var(--gap-sm);
+  flex-wrap: wrap;
+}
+
+@keyframes jump {
+  0% {
+    transform: translateY(0);
+  }
+  45% {
+    transform: translateY(-5px);
+  }
+  100% {
+    transform: translateY(0);
+  }
+}
+
+@keyframes jump-down {
+  0% {
+    transform: translateY(0);
+  }
+  45% {
+    transform: translateY(5px);
+  }
+  100% {
+    transform: translateY(0);
+  }
+}

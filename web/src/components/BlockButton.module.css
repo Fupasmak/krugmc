@@ -1,0 +1,117 @@
+/* Кнопки-блоки: текстура настоящего блока под тёмным слоем.
+   Используются только для самых важных действий, остальное это Button. */
+
+.button {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: var(--gap-sm);
+  min-height: 44px;
+  padding: 11px 20px;
+  border: 1px solid var(--edge-dark);
+  border-radius: 0;
+  background-color: #10160f;
+  background-size: 56px 56px;
+  image-rendering: pixelated;
+  color: #eaffe0;
+  font-family: var(--font-pixel);
+  font-size: var(--text-sm);
+  letter-spacing: 0.03em;
+  /* тень под текстом, как в интерфейсе игры: держит контраст на текстуре */
+  text-shadow: 1px 1px 0 rgba(0, 0, 0, 0.85);
+  cursor: pointer;
+  text-align: center;
+  box-shadow:
+    inset 1px 1px 0 0 rgba(255, 255, 255, 0.16),
+    inset -1px -1px 0 0 rgba(0, 0, 0, 0.55),
+    var(--shadow-btn);
+  transition:
+    filter 120ms ease,
+    transform 90ms ease,
+    box-shadow 90ms ease;
+}
+
+/* Тёмный слой поверх текстуры. Затемнение сильное: текстура читается
+   как фактура, а не как картинка, и текст остаётся контрастным. */
+.button::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.7);
+  transition: background-color 120ms ease;
+  pointer-events: none;
+}
+
+.label {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  gap: var(--gap-sm);
+}
+
+.button:hover:not(:disabled):not([aria-disabled='true'])::before {
+  background: rgba(0, 0, 0, 0.58);
+}
+
+.button:hover:not(:disabled):not([aria-disabled='true']) {
+  border-color: var(--line-accent);
+}
+
+.button:active:not(:disabled):not([aria-disabled='true']) {
+  transform: translateY(2px);
+  box-shadow: inset 1px 1px 0 0 rgba(0, 0, 0, 0.5);
+}
+
+.button:active:not(:disabled):not([aria-disabled='true'])::before {
+  background: rgba(0, 0, 0, 0.78);
+}
+
+.button:disabled,
+.button[aria-disabled='true'] {
+  cursor: not-allowed;
+  filter: grayscale(0.8);
+}
+
+.button:disabled::before,
+.button[aria-disabled='true']::before {
+  background: rgba(0, 0, 0, 0.84);
+}
+
+/* Текстуры блоков */
+.grass {
+  background-image: url('/blocks/moss.webp');
+}
+
+.emerald {
+  background-image: url('/blocks/emerald.png');
+}
+
+.gold {
+  background-image: url('/blocks/sand.png');
+}
+
+.stone {
+  background-image: url('/blocks/mossy_cobblestone.png');
+}
+
+.danger {
+  background-image: url('/blocks/tnt.png');
+  color: #ffe8e8;
+}
+
+.sm {
+  min-height: 34px;
+  padding: 7px 14px;
+  font-size: var(--text-xs);
+}
+
+.square {
+  width: 40px;
+  min-height: 40px;
+  padding: 0;
+}
+
+.block {
+  width: 100%;
+}

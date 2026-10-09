@@ -1,0 +1,57 @@
+/* Единое пустое состояние: 3D-блок, заголовок, строка пояснения, кнопка.
+   Пунктирных рамок нет. */
+
+.wrap {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: var(--gap-sm);
+  padding: var(--gap-xl) var(--gap-lg);
+  background: var(--surface);
+  border: 1px solid var(--line);
+  border-radius: var(--radius-card);
+  text-align: center;
+}
+
+.block {
+  width: 72px;
+  height: 72px;
+  object-fit: contain;
+  image-rendering: pixelated;
+  opacity: 0.85;
+  filter: drop-shadow(0 8px 14px rgba(0, 0, 0, 0.4));
+  animation: float 7s ease-in-out infinite;
+}
+
+.title {
+  font-family: var(--font-accent);
+  -webkit-font-smoothing: antialiased;
+  font-size: var(--text-lg);
+  font-weight: 700;
+}
+
+.note {
+  color: var(--text-dim);
+  font-size: var(--text-sm);
+  max-width: 46ch;
+  margin: 0;
+}
+
+.compact {
+  padding: var(--gap-lg);
+}
+
+.compact .block {
+  width: 52px;
+  height: 52px;
+}
+
+@keyframes float {
+  0%,
+  100% {
+    transform: translateY(-4px);
+  }
+  50% {
+    transform: translateY(4px);
+  }
+}

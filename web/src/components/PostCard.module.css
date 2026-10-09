@@ -1,0 +1,159 @@
+.card {
+  display: grid;
+  grid-template-columns: 62px 1fr;
+  background: var(--surface);
+  border: 1px solid var(--line);
+  border-radius: var(--radius-card);
+  overflow: hidden;
+  transition:
+    transform 160ms ease,
+    border-color 160ms ease;
+}
+
+.card:hover {
+  transform: translateY(-2px);
+  border-color: var(--line-accent);
+}
+
+/* Колонка голосов слева */
+.votes {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 6px;
+  padding: var(--gap) 8px;
+  background: var(--surface-sunken);
+  border-right: 1px solid var(--line);
+}
+
+.body {
+  padding: var(--gap-lg);
+  min-width: 0;
+}
+
+.head {
+  display: flex;
+  align-items: center;
+  gap: var(--gap-sm);
+  margin-bottom: var(--gap-sm);
+  flex-wrap: wrap;
+}
+
+.author {
+  display: flex;
+  align-items: center;
+  gap: var(--gap-sm);
+  color: var(--text);
+  font-family: var(--font-pixel);
+  font-size: var(--text-sm);
+}
+
+.author:hover {
+  color: var(--acid);
+}
+
+.date {
+  color: var(--text-faint);
+  font-size: var(--text-xs);
+}
+
+.title {
+  margin: 0 0 var(--gap-sm);
+  font-family: var(--font-pixel);
+  font-size: var(--text-lg);
+}
+
+.titleLink {
+  color: var(--text);
+}
+
+.titleLink:hover {
+  color: var(--acid);
+}
+
+.text {
+  color: var(--text-dim);
+}
+
+.text p:last-child {
+  margin-bottom: 0;
+}
+
+.clamp {
+  display: -webkit-box;
+  -webkit-line-clamp: 6;
+  line-clamp: 6;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+
+
+
+
+
+.foot {
+  display: flex;
+  align-items: center;
+  gap: var(--gap-sm);
+  margin-top: var(--gap);
+  flex-wrap: wrap;
+}
+
+.edited {
+  color: var(--text-faint);
+  font-size: 11px;
+  opacity: 0.75;
+}
+
+.ownerActions {
+  margin-left: auto;
+  display: flex;
+  gap: 6px;
+}
+
+@media (max-width: 560px) {
+  .card {
+    grid-template-columns: 48px 1fr;
+  }
+
+  .body {
+    padding: var(--gap);
+  }
+}
+
+/* ТОП ЗАВОЗ: квадратная оранжевая плашка, без капсул */
+.topBadge {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  padding: 3px 8px;
+  border: 1px solid rgba(255, 150, 54, 0.75);
+  background: rgba(255, 128, 32, 0.14);
+  color: #ffa24d;
+  font-family: var(--font-pixel);
+  font-size: var(--text-xs);
+  letter-spacing: 0.04em;
+}
+
+.topFlame {
+  animation: flame 1.7s steps(2, end) infinite;
+}
+
+.cardHot {
+  border-color: rgba(255, 150, 54, 0.5);
+}
+
+.cardHot:hover {
+  border-color: rgba(255, 150, 54, 0.85);
+}
+
+@keyframes flame {
+  0%,
+  60% {
+    opacity: 1;
+  }
+  61%,
+  100% {
+    opacity: 0.55;
+  }
+}

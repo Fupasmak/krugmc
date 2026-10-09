@@ -1,0 +1,130 @@
+.toolbar {
+  display: flex;
+  gap: var(--gap-sm);
+  flex-wrap: wrap;
+  align-items: flex-end;
+  margin-bottom: var(--gap-lg);
+}
+
+.search {
+  display: flex;
+  gap: var(--gap-sm);
+  flex: 1;
+  min-width: 240px;
+}
+
+.sorts {
+  display: flex;
+  gap: 6px;
+}
+
+.sort {
+  padding: 8px 14px;
+  background: var(--surface);
+  border: 1px solid var(--line);
+  border-radius: 0;
+  color: var(--text-dim);
+  font-family: var(--font-pixel);
+  font-size: var(--text-xs);
+  text-transform: uppercase;
+}
+
+.sortActive {
+  color: var(--acid);
+  border-color: var(--acid-dim);
+  background: var(--surface-3);
+}
+
+.grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(190px, 1fr));
+  gap: var(--gap);
+}
+
+.empty {
+  padding: var(--gap-xl);
+  text-align: center;
+  color: var(--text-faint);
+  background: var(--surface);
+  border: 1px solid var(--line);
+  border-radius: var(--radius-card);
+}
+
+/* страница игрока */
+.profile {
+  display: grid;
+  grid-template-columns: minmax(0, 320px) minmax(0, 1fr);
+  gap: var(--gap-lg);
+  align-items: start;
+}
+
+.card {
+  border: 1px solid var(--line);
+  border-radius: var(--radius-panel);
+  overflow: hidden;
+  background: var(--surface-sunken);
+}
+
+.card img {
+  width: 100%;
+  aspect-ratio: 2 / 3;
+  object-fit: cover;
+}
+
+.head {
+  display: flex;
+  align-items: center;
+  gap: var(--gap);
+  margin-bottom: var(--gap);
+}
+
+.nickname {
+  font-family: var(--font-pixel);
+  font-size: var(--text-2xl);
+  line-height: 1.05;
+}
+
+.facts {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+  gap: var(--gap-sm);
+  margin-bottom: var(--gap-lg);
+}
+
+.fact {
+  padding: var(--gap);
+  background: var(--surface);
+  border: 1px solid var(--line);
+  border-radius: var(--radius-card);
+}
+
+.factLabel {
+  display: block;
+  font-family: var(--font-pixel);
+  font-size: 10px;
+  text-transform: uppercase;
+  color: var(--text-faint);
+  letter-spacing: 0.06em;
+}
+
+.factValue {
+  font-size: var(--text-sm);
+  color: var(--text);
+  word-break: break-all;
+}
+
+.posts {
+  display: flex;
+  flex-direction: column;
+  gap: var(--gap);
+}
+
+@media (max-width: 860px) {
+  .profile {
+    grid-template-columns: 1fr;
+  }
+
+  .card {
+    max-width: 320px;
+  }
+}

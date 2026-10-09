@@ -1,0 +1,642 @@
+@import './tokens.css';
+
+/* ---------------------------------------------------------------------------
+   Science Gothic: акцентный шрифт заглушек и статусов. Вариативный, OFL.
+   Лицензия лежит рядом: public/fonts/science-gothic-LICENSE.txt
+--------------------------------------------------------------------------- */
+
+@font-face {
+  font-family: 'Science Gothic';
+  src: url('/fonts/science-gothic-latin.woff2') format('woff2');
+  font-weight: 100 900;
+  font-style: normal;
+  font-display: swap;
+  unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+2000-206F,
+    U+2074, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215;
+}
+
+@font-face {
+  font-family: 'Science Gothic';
+  src: url('/fonts/science-gothic-cyrillic.woff2') format('woff2');
+  font-weight: 100 900;
+  font-style: normal;
+  font-display: swap;
+  unicode-range: U+0301, U+0400-045F, U+0490-0491, U+04B0-04B1, U+2116;
+}
+
+/* ---------------------------------------------------------------------------
+   Базовое
+--------------------------------------------------------------------------- */
+
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+}
+
+html,
+body {
+  margin: 0;
+  padding: 0;
+}
+
+html {
+  scroll-behavior: smooth;
+  scroll-padding-top: calc(var(--header-height) + 16px);
+}
+
+body {
+  min-height: 100vh;
+  background-color: var(--bg);
+  color: var(--text);
+  font-family: var(--font-body);
+  font-size: var(--text-md);
+  line-height: 1.65;
+  -webkit-font-smoothing: antialiased;
+}
+
+/* Сетка старого монитора: строки развёртки и редкие вертикали.
+   Контраст низкий, читать не мешает. */
+body::before {
+  content: '';
+  position: fixed;
+  inset: 0;
+  z-index: -2;
+  pointer-events: none;
+  background-image:
+    repeating-linear-gradient(180deg, rgba(124, 255, 90, 0.035) 0 1px, transparent 1px 4px),
+    repeating-linear-gradient(90deg, rgba(124, 255, 90, 0.022) 0 1px, transparent 1px 64px),
+    radial-gradient(circle at 50% 0%, rgba(47, 107, 40, 0.3), transparent 62%);
+}
+
+/* ---------------------------------------------------------------------------
+   Полоса прокрутки: тёмная дорожка, зелёный ползунок
+--------------------------------------------------------------------------- */
+
+html {
+  scrollbar-color: var(--phosphor-dim) var(--bg-deep);
+  scrollbar-width: thin;
+}
+
+::-webkit-scrollbar {
+  width: 11px;
+  height: 11px;
+}
+
+::-webkit-scrollbar-track {
+  background: var(--bg-deep);
+  border-left: 1px solid var(--line);
+}
+
+::-webkit-scrollbar-thumb {
+  background: var(--phosphor-dim);
+  border-radius: 2px;
+  border: 2px solid var(--bg-deep);
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: var(--phosphor);
+}
+
+::-webkit-scrollbar-corner {
+  background: var(--bg-deep);
+}
+
+/* На тач-устройствах остаётся системная полоса */
+@media (hover: none) {
+  html {
+    scrollbar-width: auto;
+    scrollbar-color: auto;
+  }
+
+  ::-webkit-scrollbar {
+    width: auto;
+    height: auto;
+  }
+}
+
+img,
+svg,
+video {
+  display: block;
+  max-width: 100%;
+}
+
+.pixelated {
+  image-rendering: pixelated;
+}
+
+/* Заголовки набираются фирменным пиксельным шрифтом */
+h1,
+h2,
+h3,
+h4 {
+  font-family: var(--font-pixel);
+  font-weight: 400;
+  line-height: 1.25;
+  letter-spacing: 0.02em;
+  margin: 0;
+  /* сглаживание размывает пиксели, на крупных кеглях оно лишнее */
+  -webkit-font-smoothing: none;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+h1 {
+  font-size: var(--text-2xl);
+}
+h2 {
+  font-size: var(--text-xl);
+}
+h3 {
+  font-size: var(--text-lg);
+}
+
+/* Science Gothic: только заглушки, статусы и экраны ошибок */
+.accent-type {
+  font-family: var(--font-accent);
+  font-weight: 700;
+  letter-spacing: -0.01em;
+  -webkit-font-smoothing: antialiased;
+}
+
+p {
+  margin: 0 0 1em;
+}
+
+a {
+  color: var(--phosphor);
+  text-decoration: none;
+  transition: color 120ms ease;
+}
+
+a:hover {
+  color: var(--acid);
+}
+
+:focus-visible {
+  outline: 2px solid var(--phosphor);
+  outline-offset: 2px;
+}
+
+::selection {
+  background: var(--phosphor);
+  color: var(--text-inverse);
+}
+
+/* Курсив держит игру слов: круглое против квадратного */
+em {
+  font-style: italic;
+  color: var(--phosphor-dim);
+}
+
+/* ---------------------------------------------------------------------------
+   Разметка
+--------------------------------------------------------------------------- */
+
+.container {
+  width: 100%;
+  max-width: var(--container);
+  margin: 0 auto;
+  padding: 0 var(--gap-lg);
+}
+
+.page {
+  padding-top: var(--gap-xl);
+  padding-bottom: var(--gap-2xl);
+}
+
+.stack {
+  display: flex;
+  flex-direction: column;
+  gap: var(--gap);
+}
+
+.section-title {
+  display: flex;
+  align-items: center;
+  gap: var(--gap-sm);
+  margin-bottom: var(--gap-lg);
+  flex-wrap: wrap;
+}
+
+.section-title h1,
+.section-title h2 {
+  min-width: 0;
+}
+
+.section-title .faint {
+  white-space: nowrap;
+}
+
+/* На узком экране подпись переносится, а не вылезает за край */
+@media (max-width: 600px) {
+  .section-title .faint {
+    white-space: normal;
+  }
+
+  .section-title .rule {
+    display: none;
+  }
+}
+
+/* Разделитель в терминальном стиле: линия и ряд мелких пикселей */
+.rule {
+  flex: 1;
+  min-width: 24px;
+  height: 5px;
+  background-image:
+    linear-gradient(var(--line), var(--line)),
+    repeating-linear-gradient(90deg, var(--line-strong) 0 2px, transparent 2px 6px);
+  background-size:
+    100% 1px,
+    100% 5px;
+  background-position:
+    0 2px,
+    0 0;
+  background-repeat: no-repeat, repeat-x;
+  opacity: 0.75;
+}
+
+/* ---------------------------------------------------------------------------
+   Панели
+--------------------------------------------------------------------------- */
+
+.panel {
+  background: var(--surface);
+  border: 1px solid var(--line);
+  border-radius: var(--radius-card);
+  padding: var(--gap-lg);
+}
+
+/* Объёмная пиксельная рамка, как у окон в игре */
+.panel--gui {
+  border: 1px solid var(--edge-dark);
+  border-radius: 0;
+  background: var(--surface-solid);
+  box-shadow:
+    inset 2px 2px 0 0 var(--edge-light),
+    inset -2px -2px 0 0 var(--edge-dark);
+}
+
+.panel--sunken {
+  background: var(--surface-sunken);
+}
+
+.panel--flush {
+  padding: 0;
+  overflow: hidden;
+}
+
+.card-hover {
+  transition:
+    transform 160ms ease,
+    border-color 160ms ease;
+}
+
+.card-hover:hover {
+  transform: translateY(-2px);
+  border-color: var(--line-accent);
+}
+
+/* ---------------------------------------------------------------------------
+   Кнопки терминала.
+   Блочные кнопки с текстурами живут отдельно, в BlockButton.module.css:
+   текстура это акцент для пяти важных действий, а не общий стиль.
+--------------------------------------------------------------------------- */
+
+.btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: var(--gap-sm);
+  min-height: 40px;
+  padding: 9px 16px;
+  background: rgba(124, 255, 90, 0.04);
+  border: 1px solid var(--line-strong);
+  border-radius: var(--radius-btn);
+  color: var(--text);
+  font-family: var(--font-pixel);
+  font-size: var(--text-sm);
+  letter-spacing: 0.03em;
+  text-align: center;
+  cursor: pointer;
+  transition:
+    color 120ms ease,
+    border-color 120ms ease,
+    background-color 120ms ease;
+}
+
+.btn:hover:not(:disabled):not([aria-disabled='true']) {
+  color: var(--phosphor);
+  border-color: var(--line-accent);
+  background: rgba(124, 255, 90, 0.09);
+}
+
+.btn:active:not(:disabled):not([aria-disabled='true']) {
+  transform: translateY(1px);
+}
+
+.btn:disabled,
+.btn[aria-disabled='true'] {
+  cursor: not-allowed;
+  color: var(--text-faint);
+  border-color: var(--line);
+  background: transparent;
+}
+
+/* Цветовые варианты отличаются только рамкой и текстом */
+.btn--grass:hover:not(:disabled),
+.btn--emerald:hover:not(:disabled) {
+  color: var(--phosphor);
+}
+
+.btn--telegram {
+  border-color: rgba(122, 226, 240, 0.3);
+}
+
+.btn--telegram:hover:not(:disabled) {
+  color: #8fe9ff;
+  border-color: rgba(122, 226, 240, 0.65);
+  background: rgba(122, 226, 240, 0.09);
+}
+
+.btn--danger {
+  border-color: rgba(255, 107, 107, 0.3);
+}
+
+.btn--danger:hover:not(:disabled) {
+  color: var(--danger);
+  border-color: rgba(255, 107, 107, 0.7);
+  background: rgba(255, 107, 107, 0.09);
+}
+
+.btn--gold {
+  border-color: rgba(255, 204, 77, 0.3);
+}
+
+.btn--gold:hover:not(:disabled) {
+  color: var(--warning);
+  border-color: rgba(255, 204, 77, 0.7);
+  background: rgba(255, 204, 77, 0.09);
+}
+
+/* Вторичный вид: просто текст со стрелкой */
+.btn--ghost {
+  background: transparent;
+  border-color: transparent;
+  color: var(--text-dim);
+  padding-left: 8px;
+  padding-right: 8px;
+}
+
+.btn--ghost:hover:not(:disabled) {
+  color: var(--phosphor);
+  border-color: transparent;
+  background: transparent;
+  text-decoration: underline;
+  text-underline-offset: 4px;
+}
+
+.btn--sm {
+  min-height: 32px;
+  padding: 6px 12px;
+  font-size: var(--text-xs);
+}
+
+.btn--block {
+  width: 100%;
+}
+
+.btn--square {
+  width: 40px;
+  min-height: 40px;
+  padding: 0;
+}
+
+/* ---------------------------------------------------------------------------
+   Поля ввода
+--------------------------------------------------------------------------- */
+
+.field {
+  display: flex;
+  flex-direction: column;
+  gap: var(--gap-xs);
+}
+
+.field__label {
+  font-family: var(--font-pixel);
+  font-size: var(--text-xs);
+  color: var(--text-dim);
+  letter-spacing: 0.04em;
+}
+
+.field__hint {
+  font-size: var(--text-xs);
+  color: var(--text-faint);
+}
+
+.input,
+.textarea,
+.select {
+  width: 100%;
+  padding: 11px 14px;
+  background: var(--surface-sunken);
+  border: 1px solid var(--line);
+  border-radius: var(--radius-sm);
+  color: var(--text);
+  font-family: var(--font-body);
+  font-size: var(--text-md);
+  transition: border-color 120ms ease;
+}
+
+.textarea {
+  min-height: 170px;
+  resize: vertical;
+  line-height: 1.6;
+}
+
+.input:focus,
+.textarea:focus,
+.select:focus {
+  outline: none;
+  border-color: var(--line-accent);
+}
+
+.input::placeholder,
+.textarea::placeholder {
+  color: var(--text-faint);
+}
+
+/* ---------------------------------------------------------------------------
+   Мелочи
+--------------------------------------------------------------------------- */
+
+/* Метка: квадратная и пиксельная, никаких капсул */
+.tag {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 3px 8px;
+  border: 1px solid var(--line);
+  background: var(--surface-2);
+  font-family: var(--font-pixel);
+  font-size: var(--text-xs);
+  color: var(--text-dim);
+}
+
+.tag--stream {
+  border-color: var(--line-accent);
+  color: var(--phosphor);
+}
+
+.kicker {
+  font-family: var(--font-pixel);
+  font-size: var(--text-xs);
+  letter-spacing: 0.06em;
+  color: var(--text-faint);
+}
+
+/* Мигающий курсор терминала */
+.caret {
+  display: inline-block;
+  width: 0.5em;
+  height: 0.92em;
+  margin-left: 0.18em;
+  background: var(--phosphor);
+  vertical-align: -0.08em;
+  animation: caret-blink 1.06s steps(1, end) infinite;
+}
+
+@keyframes caret-blink {
+  0%,
+  49% {
+    opacity: 1;
+  }
+  50%,
+  100% {
+    opacity: 0;
+  }
+}
+
+.muted {
+  color: var(--text-dim);
+}
+
+.faint {
+  color: var(--text-faint);
+  font-size: var(--text-sm);
+}
+
+.error-text {
+  color: var(--danger);
+  font-size: var(--text-sm);
+}
+
+.block-icon {
+  width: 22px;
+  height: 22px;
+  image-rendering: pixelated;
+  flex-shrink: 0;
+}
+
+/* Тултип в духе описания предмета */
+.tooltip {
+  position: absolute;
+  z-index: var(--z-tooltip);
+  padding: 7px 11px;
+  background: #0a0612;
+  border: 1px solid #3b2f63;
+  color: var(--text);
+  font-size: var(--text-xs);
+  white-space: nowrap;
+  pointer-events: none;
+}
+
+/* Разметка из Markdown */
+.prose {
+  max-width: 70ch;
+}
+
+.prose h2 {
+  margin: var(--gap-xl) 0 var(--gap);
+  color: var(--phosphor);
+  font-size: var(--text-xl);
+}
+
+.prose h3 {
+  margin: var(--gap-lg) 0 var(--gap-sm);
+}
+
+.prose ul,
+.prose ol {
+  padding-left: 1.3em;
+  margin: 0 0 1em;
+}
+
+.prose li {
+  margin-bottom: 0.4em;
+}
+
+.prose blockquote {
+  margin: 0 0 1em;
+  padding: var(--gap-sm) var(--gap-lg);
+  background: var(--surface);
+  border-left: 1px solid var(--line-accent);
+  color: var(--text-dim);
+}
+
+.prose code {
+  padding: 2px 6px;
+  background: var(--surface-2);
+  font-family: var(--font-pixel);
+  font-size: 0.85em;
+}
+
+.prose table {
+  width: 100%;
+  border-collapse: collapse;
+  margin: 0 0 1.2em;
+  font-size: var(--text-sm);
+}
+
+.prose th,
+.prose td {
+  padding: 10px 12px;
+  border-bottom: 1px solid var(--line);
+  text-align: left;
+}
+
+.prose th {
+  font-family: var(--font-pixel);
+  font-size: var(--text-xs);
+  color: var(--text-dim);
+}
+
+.prose hr {
+  border: none;
+  height: 1px;
+  background: var(--line);
+  margin: var(--gap-xl) 0;
+}
+
+.visually-hidden {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  margin: -1px;
+  padding: 0;
+  overflow: hidden;
+  clip: rect(0 0 0 0);
+  white-space: nowrap;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.001ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.001ms !important;
+    scroll-behavior: auto !important;
+  }
+}

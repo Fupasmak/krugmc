@@ -1,0 +1,90 @@
+/* Вложения завоза: ничего не обрезаем, только вписываем в ячейку. */
+
+.grid {
+  display: grid;
+  gap: 6px;
+  margin-top: var(--gap);
+}
+
+/* Одно медиа: родные пропорции, ограничиваем высоту экраном */
+.single {
+  grid-template-columns: 1fr;
+}
+
+.single .cell {
+  max-height: 70vh;
+}
+
+/* Два рядом */
+.pair {
+  grid-template-columns: 1fr 1fr;
+}
+
+/* Три: крупное слева на всю высоту, два справа */
+.trio {
+  grid-template-columns: 1.4fr 1fr;
+  grid-template-rows: 1fr 1fr;
+}
+
+.trio > *:first-child {
+  grid-row: span 2;
+}
+
+/* Четыре: ровный квадрат */
+.quad {
+  grid-template-columns: 1fr 1fr;
+  grid-template-rows: 1fr 1fr;
+}
+
+.cell {
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: var(--surface-sunken);
+  border: 1px solid var(--line);
+  overflow: hidden;
+  padding: 0;
+  cursor: zoom-in;
+}
+
+.cell img {
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+}
+
+/* В сетке из нескольких элементов держим одинаковые ячейки */
+.pair .cell,
+.trio .cell,
+.quad .cell {
+  aspect-ratio: 4 / 3;
+}
+
+.videoCell {
+  cursor: default;
+}
+
+.badge {
+  position: absolute;
+  left: 6px;
+  bottom: 6px;
+  padding: 2px 7px;
+  background: rgba(5, 8, 5, 0.82);
+  border: 1px solid var(--line-strong);
+  font-family: var(--font-pixel);
+  font-size: 11px;
+  color: var(--phosphor);
+  pointer-events: none;
+}
+
+@media (max-width: 560px) {
+  .trio {
+    grid-template-columns: 1fr 1fr;
+  }
+
+  .trio > *:first-child {
+    grid-row: span 1;
+    grid-column: span 2;
+  }
+}

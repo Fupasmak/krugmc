@@ -1,0 +1,542 @@
+// Схема БД KRUG. Описание полей человеческим языком — в DATA_SCHEMA.md.
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+// ---------------------------------------------------------------------------
+//  Пользователи
+// ---------------------------------------------------------------------------
+
+enum UserType {
+  MC // игрок сервера, вошёл через /krug login
+  TG // зритель, вошёл через Telegram
+}
+
+enum Role {
+  USER
+  ADMIN
+  SUPERADMIN
+}
+
+model User {
+  id   String   @id @default(cuid())
+  type UserType
+  role Role     @default(USER)
+
+  // Minecraft-часть. У игрока, добавленного админом заранее, uuid ещё нет.
+  mcUuid          String? @unique
+  mcNickname      String?
+  mcNicknameLower String? @unique // поиск и защита от дублей при первом входе
+
+  // Telegram-часть. У игроков эти поля не используются: привязка личного
+  // аккаунта убрана, остались только зрители, которые входят через бота.
+  tgId        BigInt? @unique
+  tgUsername  String?
+  tgFirstName String?
+  tgPhotoUrl  String?
+
+  // Публичный Telegram-канал игрока, хранится нормализованным именем
+  tgChannel String?
+
+  // Профиль на сайте
+  cardFile String? // имя PNG в web/public/cards, null -> заглушка
+  wikiText String? @db.Text // текст на странице игрока (Markdown), правит админ
+  hidden   Boolean @default(false) // скрыть из списка игроков
+  isTest   Boolean @default(false) // аккаунт из тестового входа, можно удалять пачкой
+
+  firstLoginAt DateTime? // null = добавлен админом, но ещё не заходил
+  lastLoginAt  DateTime?
+  createdAt    DateTime  @default(now())
+  updatedAt    DateTime  @updatedAt
+
+  createdById  String?
+  createdBy    User?   @relation("UserCreatedBy", fields: [createdById], references: [id], onDelete: SetNull)
+  createdUsers User[]  @relation("UserCreatedBy")
+
+  skin         Skin?
+  sessions     Session[]
+  posts        Post[]
+  votes        Vote[]
+  archiveItems ArchiveItem[]
+  mediaItems   MediaItem[]
+  wikiEdits    WikiArticle[]
+  textEdits    SiteText[]
+  auditLogs    AuditLog[]
+
+  seasonEntries SeasonPlayer[]
+  pointActions  PointEntry[]   @relation("PointEntryActor")
+  closedSeasons Season[]       @relation("SeasonClosedBy")
+  closedWeeks   PointWeek[]    @relation("PointWeekClosedBy")
+
+  @@index([type, hidden])
+  @@index([firstLoginAt])
+}
+
+model Skin {
+  userId        String   @id
+  user          User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  texturesValue String?  @db.Text // base64-свойство textures из профиля игрока
+  skinUrl       String?
+  // Готовая голова 64x64 (лицо + второй слой), из неё масштабируются все размеры
+  headPng       Bytes
+  isSlim        Boolean  @default(false)
+  updatedAt     DateTime @updatedAt
+}
+
+model Session {
+  id         String    @id @default(cuid())
+  userId     String
+  user       User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+  tokenHash  String    @unique // в cookie лежит сам токен, в базе только SHA-256
+  userAgent  String?
+  ip         String?
+  createdAt  DateTime  @default(now())
+  lastSeenAt DateTime  @default(now())
+  expiresAt  DateTime
+  revokedAt  DateTime?
+
+  @@index([userId])
+  @@index([expiresAt])
+}
+
+// ---------------------------------------------------------------------------
+//  Вход
+// ---------------------------------------------------------------------------
+
+enum LoginCodeStatus {
+  PENDING
+  CONFIRMED
+  USED
+  EXPIRED
+}
+
+model LoginCode {
+  id           String          @id @default(cuid())
+  code         String          @unique // шесть символов, показывается на сайте
+  browserToken String          @unique // httpOnly-cookie браузера, который просит вход
+  status       LoginCodeStatus @default(PENDING)
+  attempts     Int             @default(0)
+  userId       String? // заполняется после подтверждения плагином
+  ip           String?
+  createdAt    DateTime        @default(now())
+  expiresAt    DateTime
+  confirmedAt  DateTime?
+
+  @@index([expiresAt])
+}
+
+enum TokenPurpose {
+  LOGIN // вход зрителя через Telegram
+  LINK // привязка Telegram к аккаунту игрока
+}
+
+enum TokenStatus {
+  PENDING
+  CONFIRMED
+  USED
+  EXPIRED
+}
+
+model TgLoginToken {
+  id           String       @id @default(cuid())
+  token        String       @unique // попадает в deep-link ?start=login_<token>
+  purpose      TokenPurpose
+  status       TokenStatus  @default(PENDING)
+  browserToken String // тот же cookie браузера
+  targetUserId String? // для LINK — чей аккаунт привязываем
+  resultUserId String? // для LOGIN — какой аккаунт получился
+  ip           String?
+  createdAt    DateTime     @default(now())
+  expiresAt    DateTime
+  confirmedAt  DateTime?
+
+  @@index([expiresAt])
+  @@index([browserToken])
+}
+
+// Защита внутренних запросов от повтора: nonce живёт столько же, сколько окно подписи
+model UsedNonce {
+  nonce     String   @id
+  scope     String // mc | bot
+  createdAt DateTime @default(now())
+
+  @@index([createdAt])
+}
+
+// ---------------------------------------------------------------------------
+//  Завозы
+// ---------------------------------------------------------------------------
+
+enum PostTag {
+  STREAM // На стриме
+  OFFSTREAM // Вне стрима
+}
+
+enum AttachmentKind {
+  IMAGE
+  VIDEO
+}
+
+model Post {
+  id       String  @id @default(cuid())
+  authorId String
+  author   User    @relation(fields: [authorId], references: [id], onDelete: Cascade)
+  title    String  @db.VarChar(120)
+  body     String  @db.Text
+  tag      PostTag
+  pinned   Boolean @default(false)
+
+  // денормализованные счётчики: меняются в одной транзакции с голосом
+  upCount   Int @default(0)
+  downCount Int @default(0)
+  score     Int @default(0)
+
+  createdAt DateTime  @default(now())
+  editedAt  DateTime? // null = не редактировался, иначе подпись «изменено»
+  deletedAt DateTime?
+
+  attachments PostAttachment[]
+  votes       Vote[]
+  archiveItem ArchiveItem?
+
+  pointEntries PointEntry[]
+
+  @@index([createdAt])
+  @@index([deletedAt, createdAt])
+  @@index([tag, createdAt])
+  @@index([authorId, createdAt])
+  @@index([score])
+}
+
+model PostAttachment {
+  id         String         @id @default(cuid())
+  postId     String
+  post       Post           @relation(fields: [postId], references: [id], onDelete: Cascade)
+  kind       AttachmentKind
+  path       String // путь относительно UPLOAD_DIR
+  mime       String
+  size       Int
+  width      Int?
+  height     Int?
+  posterPath String? // кадр-обложка для видео
+  order      Int            @default(0)
+
+  @@index([postId, order])
+}
+
+model Vote {
+  id        String   @id @default(cuid())
+  postId    String
+  post      Post     @relation(fields: [postId], references: [id], onDelete: Cascade)
+  userId    String
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  value     Int // 1 или -1, менять нельзя
+  createdAt DateTime @default(now())
+
+  @@unique([postId, userId]) // один голос на пользователя за завоз
+  @@index([userId])
+  @@index([createdAt])
+}
+
+/**
+ * Кэш последних постов публичного канала игрока.
+ */
+model TelegramChannelCache {
+  channel   String   @id
+  posts     Json
+  title     String?
+  ok        Boolean  @default(true)
+  error     String?
+  fetchedAt DateTime @default(now())
+
+  @@index([fetchedAt])
+}
+
+model SubscriptionCache {
+  tgId       BigInt   @id
+  subscribed Boolean
+  checkedAt  DateTime @default(now())
+}
+
+// ---------------------------------------------------------------------------
+//  Архив, вики, медиа, команда
+// ---------------------------------------------------------------------------
+
+model ArchiveWeek {
+  id        String   @id @default(cuid())
+  number    Int      @unique
+  title     String
+  summary   String?  @db.Text
+  coverPath String?
+  startsAt  DateTime
+  endsAt    DateTime
+  published Boolean  @default(false)
+  createdAt DateTime @default(now())
+
+  items ArchiveItem[]
+  media MediaItem[]
+
+  pointWeeks PointWeek[]
+
+  @@index([number])
+}
+
+enum ArchiveItemKind {
+  BUILD // постройка
+  ART // арт
+  VIDEO // видео
+  POST // завоз
+  LIFE // жизнь сервера, прочее
+}
+
+model ArchiveItem {
+  id          String          @id @default(cuid())
+  weekId      String
+  week        ArchiveWeek     @relation(fields: [weekId], references: [id], onDelete: Cascade)
+  kind        ArchiveItemKind
+  title       String
+  description String?         @db.Text
+  path        String? // загруженный файл
+  url         String? // внешняя ссылка (YouTube и т.п.)
+  authorId    String?
+  author      User?           @relation(fields: [authorId], references: [id], onDelete: SetNull)
+  postId      String?         @unique
+  post        Post?           @relation(fields: [postId], references: [id], onDelete: SetNull)
+  order       Int             @default(0)
+  createdAt   DateTime        @default(now())
+
+  @@index([weekId, order])
+  @@index([kind])
+}
+
+model WikiArticle {
+  id        String   @id @default(cuid())
+  slug      String   @unique
+  title     String
+  category  String   @default("Общее")
+  body      String   @db.Text
+  published Boolean  @default(true)
+  updatedAt DateTime @updatedAt
+  createdAt DateTime @default(now())
+
+  updatedById String?
+  updatedBy   User?   @relation(fields: [updatedById], references: [id], onDelete: SetNull)
+
+  @@index([category])
+}
+
+model MediaItem {
+  id          String       @id @default(cuid())
+  title       String
+  url         String // ссылка на YouTube/VK
+  thumbnail   String?
+  description String?      @db.Text
+  authorId    String?
+  author      User?        @relation(fields: [authorId], references: [id], onDelete: SetNull)
+  weekId      String?
+  week        ArchiveWeek? @relation(fields: [weekId], references: [id], onDelete: SetNull)
+  publishedAt DateTime     @default(now())
+  createdAt   DateTime     @default(now())
+
+  @@index([publishedAt])
+}
+
+model TeamMember {
+  id       String  @id @default(cuid())
+  nickname String  @unique
+  role     String
+  about    String  @db.Text
+  cardFile String?
+  links    Json? // { telegram, discord, youtube, twitch }
+  order    Int     @default(0)
+  visible  Boolean @default(true)
+}
+
+// ---------------------------------------------------------------------------
+//  Служебное
+// ---------------------------------------------------------------------------
+
+/**
+ * Тексты сайта, которые администрация правит в настройках.
+ */
+model SiteText {
+  key         String   @id
+  value       String   @db.Text
+  updatedAt   DateTime @updatedAt
+  updatedById String?
+  updatedBy   User?    @relation(fields: [updatedById], references: [id], onDelete: SetNull)
+}
+
+// Тексты и настройки, которые правятся из админки без деплоя
+model SiteSetting {
+  key       String   @id
+  value     Json
+  updatedAt DateTime @updatedAt
+}
+
+model AuditLog {
+  id        String   @id @default(cuid())
+  actorId   String?
+  actor     User?    @relation(fields: [actorId], references: [id], onDelete: SetNull)
+  action    String
+  target    String?
+  meta      Json?
+  ip        String?
+  createdAt DateTime @default(now())
+
+  @@index([createdAt])
+  @@index([actorId])
+}
+
+model RateLimit {
+  key         String   @id // например "vote:<userId>" или "post:<ip>"
+  count       Int      @default(0)
+  windowStart DateTime @default(now())
+
+  @@index([windowStart])
+}
+
+// ---------------------------------------------------------------------------
+// Баллы. Видны только администрации, в публичные ответы не попадают.
+// Суммы хранятся в сотых долях балла: 5 баллов = 500, 0.5 балла = 50.
+// ---------------------------------------------------------------------------
+
+enum PointCategory {
+  EVENT
+  SOCIAL
+  COMMUNITY
+  CONTENT
+  VIEWS
+  REFERRAL
+  ADJUSTMENT
+}
+
+enum PointBucket {
+  MAIN
+  RESERVE
+}
+
+enum PointKind {
+  AWARD
+  ADJUSTMENT
+  REVERSAL
+  RESERVE_SHARE
+  RESERVE_WITHDRAW
+  SEASON_SETTLEMENT
+}
+
+enum SeasonPlayerStatus {
+  ACTIVE
+}
+
+model Season {
+  id         String    @id @default(cuid())
+  number     Int       @unique
+  title      String
+  startsAt   DateTime
+  closedAt   DateTime?
+  closedById String?
+  closedBy   User?     @relation("SeasonClosedBy", fields: [closedById], references: [id], onDelete: SetNull)
+  createdAt  DateTime  @default(now())
+
+  weeks   PointWeek[]
+  players SeasonPlayer[]
+  entries PointEntry[]
+}
+
+model PointWeek {
+  id            String       @id @default(cuid())
+  seasonId      String
+  season        Season       @relation(fields: [seasonId], references: [id], onDelete: Cascade)
+  number        Int
+  startsAt      DateTime
+  endsAt        DateTime
+  closedAt      DateTime?
+  closedById    String?
+  closedBy      User?        @relation("PointWeekClosedBy", fields: [closedById], references: [id], onDelete: SetNull)
+  archiveWeekId String?
+  archiveWeek   ArchiveWeek? @relation(fields: [archiveWeekId], references: [id], onDelete: SetNull)
+
+  entries PointEntry[]
+
+  @@unique([seasonId, number])
+  @@index([seasonId, startsAt])
+}
+
+model SeasonPlayer {
+  id          String             @id @default(cuid())
+  seasonId    String
+  season      Season             @relation(fields: [seasonId], references: [id], onDelete: Cascade)
+  userId      String
+  user        User               @relation(fields: [userId], references: [id], onDelete: Cascade)
+  invitedById String?
+  invitedBy   SeasonPlayer?      @relation("SeasonReferral", fields: [invitedById], references: [id], onDelete: SetNull)
+  invited     SeasonPlayer[]     @relation("SeasonReferral")
+  status      SeasonPlayerStatus @default(ACTIVE)
+  joinedAt    DateTime           @default(now())
+
+  entries PointEntry[]
+
+  @@unique([seasonId, userId])
+  @@index([invitedById])
+}
+
+model PointPreset {
+  id            String        @id @default(cuid())
+  category      PointCategory
+  title         String
+  description   String?       @db.Text
+  amount        Int?
+  oncePerSeason Boolean       @default(false)
+  active        Boolean       @default(true)
+  order         Int           @default(0)
+  createdAt     DateTime      @default(now())
+  updatedAt     DateTime      @updatedAt
+
+  entries PointEntry[]
+
+  @@index([category, order])
+}
+
+model PointEntry {
+  id         String         @id @default(cuid())
+  seasonId   String
+  season     Season         @relation(fields: [seasonId], references: [id], onDelete: Restrict)
+  weekId     String
+  week       PointWeek      @relation(fields: [weekId], references: [id], onDelete: Restrict)
+  playerId   String
+  player     SeasonPlayer   @relation(fields: [playerId], references: [id], onDelete: Restrict)
+  bucket     PointBucket
+  kind       PointKind
+  category   PointCategory?
+  presetId   String?
+  preset     PointPreset?   @relation(fields: [presetId], references: [id], onDelete: SetNull)
+  amount     Int
+  comment    String         @db.Text
+  proofUrl   String?
+  postId     String?
+  post       Post?          @relation(fields: [postId], references: [id], onDelete: SetNull)
+  batchId    String
+  sourceId   String?
+  source     PointEntry?    @relation("PointEntryShare", fields: [sourceId], references: [id], onDelete: Restrict)
+  shares     PointEntry[]   @relation("PointEntryShare")
+  revertsId  String?        @unique
+  reverts    PointEntry?    @relation("PointEntryRevert", fields: [revertsId], references: [id], onDelete: Restrict)
+  revertedBy PointEntry?    @relation("PointEntryRevert")
+  actorId    String
+  actor      User           @relation("PointEntryActor", fields: [actorId], references: [id], onDelete: Restrict)
+  createdAt  DateTime       @default(now())
+
+  @@index([seasonId, weekId])
+  @@index([playerId, createdAt])
+  @@index([actorId])
+  @@index([presetId])
+  @@index([batchId])
+  @@index([sourceId])
+}

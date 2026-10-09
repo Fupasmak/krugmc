@@ -1,0 +1,28 @@
+# зависимости
+node_modules/
+.pnp*
+
+# сборка
+web/.next/
+web/out/
+web/next-env.d.ts
+TGBOT/dist/
+minecraft/build/
+minecraft/.gradle/
+
+# секреты
+.env
+.env.local
+.env.*.local
+
+# пользовательские загрузки
+web/uploads/*
+!web/uploads/.gitkeep
+
+# кэш голов скинов
+web/.cache/
+
+# системное
+.DS_Store
+Thumbs.db
+*.log

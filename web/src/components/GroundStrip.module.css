@@ -1,0 +1,43 @@
+/* Полоса земли на всю ширину: граница между hero и остальной страницей.
+   Вид сбоку: сверху тонкий слой мха, снизу земля. */
+
+.strip {
+  position: relative;
+  width: 100%;
+  height: 56px;
+  background-image: url('/blocks/dirt.png');
+  background-size: 56px 56px;
+  background-repeat: repeat-x;
+  image-rendering: pixelated;
+  box-shadow: inset 0 -24px 32px rgba(0, 0, 0, 0.55);
+}
+
+.top {
+  position: absolute;
+  inset: 0 0 auto 0;
+  height: 14px;
+  background-image: url('/blocks/moss.webp');
+  background-size: 56px 56px;
+  background-repeat: repeat-x;
+  image-rendering: pixelated;
+}
+
+/* Плавный стык с фоном страницы снизу */
+.fade {
+  position: absolute;
+  inset: auto 0 0 0;
+  height: 26px;
+  background: linear-gradient(180deg, transparent, var(--bg));
+}
+
+@media (max-width: 720px) {
+  .strip {
+    height: 40px;
+    background-size: 40px 40px;
+  }
+
+  .top {
+    height: 10px;
+    background-size: 40px 40px;
+  }
+}

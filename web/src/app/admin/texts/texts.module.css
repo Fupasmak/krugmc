@@ -1,0 +1,71 @@
+.bar {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--gap-sm);
+  align-items: center;
+  margin-bottom: var(--gap);
+}
+
+.bar input {
+  flex: 1;
+  min-width: 220px;
+}
+
+.pages {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 4px;
+  margin-bottom: var(--gap);
+}
+
+.page {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 6px 10px;
+  border: 1px solid var(--line);
+  background: var(--surface);
+  color: var(--text-dim);
+  font-family: var(--font-pixel);
+  font-size: var(--text-xs);
+  cursor: pointer;
+}
+
+.page:hover {
+  color: var(--acid);
+  border-color: var(--line-strong);
+}
+
+.pageActive {
+  color: var(--acid);
+  border-color: var(--line-accent);
+  background: var(--surface-2);
+}
+
+.badge {
+  min-width: 18px;
+  padding: 1px 4px;
+  background: var(--phosphor-dim);
+  color: var(--bg);
+  font-size: 10px;
+  text-align: center;
+}
+
+.dirty {
+  border-color: var(--line-accent);
+}
+
+.floating {
+  position: sticky;
+  bottom: var(--gap);
+  z-index: 5;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--gap);
+  margin-top: var(--gap);
+  padding: var(--gap-sm) var(--gap);
+  background: var(--surface-solid);
+  border: 1px solid var(--line-accent);
+  font-size: var(--text-sm);
+}

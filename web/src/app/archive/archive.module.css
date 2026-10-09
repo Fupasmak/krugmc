@@ -1,0 +1,150 @@
+.highlight {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(0, 1.2fr);
+  gap: var(--gap-lg);
+  padding: var(--gap-lg);
+  background: var(--surface);
+  border: 1px solid var(--line);
+  border-radius: var(--radius-card);
+  margin-bottom: var(--gap-xl);
+}
+
+.number {
+  font-family: var(--font-pixel);
+  font-size: clamp(38px, 8vw, 72px);
+  color: var(--acid);
+  line-height: 1;
+}
+
+.weeks {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(190px, 1fr));
+  gap: var(--gap);
+  margin-bottom: var(--gap-xl);
+}
+
+.week {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  padding: var(--gap);
+  background: var(--surface);
+  border: 1px solid var(--line);
+  border-radius: var(--radius-card);
+  color: var(--text);
+}
+
+.week:hover {
+  border-color: var(--acid-dim);
+  color: var(--acid);
+}
+
+.weekNumber {
+  font-family: var(--font-pixel);
+  font-size: var(--text-xl);
+  color: var(--acid);
+}
+
+.draft {
+  align-self: flex-start;
+  padding: 1px 6px;
+  border: 1px solid var(--warning);
+  color: var(--warning);
+  font-size: 10px;
+  font-family: var(--font-pixel);
+  text-transform: uppercase;
+}
+
+.filters {
+  display: flex;
+  gap: 6px;
+  flex-wrap: wrap;
+  margin-bottom: var(--gap);
+}
+
+.filter {
+  padding: 7px 14px;
+  background: var(--surface);
+  border: 1px solid var(--line);
+  border-radius: 0;
+  color: var(--text-dim);
+  font-family: var(--font-pixel);
+  font-size: var(--text-xs);
+  text-transform: uppercase;
+}
+
+.filterActive {
+  color: var(--acid);
+  border-color: var(--acid-dim);
+  background: var(--surface-3);
+}
+
+/* плитка архива: разная высота, чтобы не выглядело сеткой одинаковых карточек */
+.gallery {
+  columns: 4 220px;
+  column-gap: var(--gap);
+}
+
+.item {
+  break-inside: avoid;
+  margin-bottom: var(--gap);
+  background: var(--surface);
+  border: 1px solid var(--line);
+  border-radius: var(--radius-card);
+  overflow: hidden;
+  display: block;
+  transition: transform 160ms ease, border-color 160ms ease;
+  color: var(--text);
+}
+
+.item img {
+  width: 100%;
+  display: block;
+  border-bottom: 1px solid var(--line);
+}
+
+.item:hover {
+  transform: translateY(-3px);
+  border-color: var(--line-accent);
+}
+
+.itemBody {
+  padding: var(--gap-sm);
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.itemKind {
+  font-family: var(--font-pixel);
+  font-size: 10px;
+  text-transform: uppercase;
+  color: var(--text-faint);
+}
+
+.itemTitle {
+  font-size: var(--text-sm);
+}
+
+.itemAuthor {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-size: var(--text-xs);
+  color: var(--text-dim);
+}
+
+.empty {
+  padding: var(--gap-xl);
+  text-align: center;
+  color: var(--text-faint);
+  background: var(--surface);
+  border: 1px solid var(--line);
+  border-radius: var(--radius-card);
+}
+
+@media (max-width: 860px) {
+  .highlight {
+    grid-template-columns: 1fr;
+  }
+}

@@ -1,0 +1,159 @@
+.header {
+  position: sticky;
+  top: 0;
+  z-index: var(--z-header);
+  border-bottom: 1px solid transparent;
+  transition:
+    background-color 180ms ease,
+    border-color 180ms ease;
+}
+
+/* При скролле шапка притемняется и слегка размывает фон */
+.scrolled {
+  background: rgba(11, 15, 12, 0.72);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  border-bottom-color: var(--line);
+}
+
+.inner {
+  display: flex;
+  align-items: center;
+  gap: var(--gap);
+  min-height: var(--header-height);
+}
+
+.logo {
+  display: flex;
+  align-items: center;
+  color: var(--text);
+  flex-shrink: 0;
+}
+
+.logo:hover {
+  color: var(--acid);
+}
+
+.nav {
+  display: flex;
+  align-items: center;
+  gap: 2px;
+  flex: 1;
+  min-width: 0;
+}
+
+.navLink {
+  position: relative;
+  padding: 9px 12px;
+  border-radius: var(--radius-btn);
+  font-family: var(--font-pixel);
+  font-size: 13px;
+  letter-spacing: 0.06em;
+  color: var(--text-dim);
+  white-space: nowrap;
+  transition:
+    color 120ms ease,
+    background-color 120ms ease;
+}
+
+.navLink:hover {
+  color: var(--text);
+  background: var(--surface-2);
+}
+
+.navLinkActive {
+  color: var(--text);
+}
+
+/* Зелёная полоска под активным пунктом */
+.navLinkActive::after {
+  content: '';
+  position: absolute;
+  left: 12px;
+  right: 12px;
+  bottom: 2px;
+  height: 2px;
+  border-radius: 2px;
+  background: var(--acid);
+}
+
+.more {
+  position: relative;
+}
+
+/* Слово и стрелка в одну строку, стрелка справа */
+.moreButton {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  background: none;
+  border: 1px solid transparent;
+  cursor: pointer;
+  font-family: var(--font-pixel);
+  font-size: 13px;
+  letter-spacing: 0.06em;
+  color: var(--text-dim);
+}
+
+.chevron {
+  transition: transform 160ms ease;
+}
+
+.chevronOpen {
+  transform: rotate(180deg);
+}
+
+.moreMenu {
+  position: absolute;
+  top: calc(100% + 8px);
+  left: 0;
+  min-width: 190px;
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  padding: 6px;
+  background: var(--surface-solid);
+  border: 1px solid var(--line);
+  border-radius: var(--radius-card);
+  box-shadow: var(--shadow-card);
+  z-index: var(--z-menu);
+}
+
+.right {
+  display: flex;
+  align-items: center;
+  gap: var(--gap-sm);
+  margin-left: auto;
+}
+
+.burger {
+  display: none;
+}
+
+@media (max-width: 1000px) {
+  .nav {
+    display: none;
+  }
+
+  .burger {
+    display: inline-flex;
+  }
+}
+
+/* На узких экранах шапке хватает символа логотипа и иконок */
+@media (max-width: 460px) {
+  .right {
+    gap: 6px;
+  }
+
+}
+
+/* Пометка у пункта, который админ видит до настройки */
+.navNote {
+  margin-left: 6px;
+  font-family: var(--font-pixel);
+  font-size: 9px;
+  letter-spacing: 0.04em;
+  color: var(--text-faint);
+  text-transform: lowercase;
+}
